@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express'); 
 const { animals } = require('./data/animals');
 
+
 const PORT = process.env.PORT || 3001; 
 const app = express(); 
 
@@ -10,6 +11,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 // parse incoming JSON data
 app.use(express.json());
+app.use(express.static('public'));
 
 
 function filterByQuery(query, animalsArray) {
@@ -109,6 +111,27 @@ app.post('/api/animals', (req, res) => {
       const animal = createNewAnimal(req.body, animals);
       res.json(animal);
     }
+});
+
+//sereves index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+});
+
+//serves animals.html
+app.get('/animals', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/animals.html'));
+});
+
+//serves zookeepr.html
+app.get('/zookeepers', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/zookeepers.html'));
+});
+
+//* acts as a wildcard meaning any route that is not defined will fall 
+//  under this request and receive the homepage in response. 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
 app.listen(PORT, () => {
